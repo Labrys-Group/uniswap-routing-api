@@ -1,8 +1,13 @@
 # https://taskfile.dev
 
 version: '3'
+dotenv: ['.env']
 
 tasks:
+  package:login:
+    desc: Log into the labrys github package registry to get the patched smart order router. Use a personal access token (classic) with the scope "read:packages" for the password, and your username as the username.
+    cmds:
+      - npm login --scope=@Labrys-Group --auth-type=legacy --registry=https://npm.pkg.github.com
   build:
     cmds:
       - task: compile:types
@@ -24,3 +29,7 @@ tasks:
     cmds:
       - npm run compile-external-types
       - npm run compile-v3-contract-types
+  fix:
+    cmds:
+      - npm run fix:prettier
+      - npm run fix:lint
