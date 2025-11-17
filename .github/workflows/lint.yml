@@ -10,7 +10,9 @@ jobs:
   run-linters:
     name: Run linters 2
     runs-on: ubuntu-latest
-
+    permissions:
+      contents: read  # Required to check out the repository
+      packages: read
     steps:
       # This action should be the first step of your job, and should be loaded on every separate job.
       # If this action is not loaded first, it will not be able to see or block any requests that occured prior to the action running.
