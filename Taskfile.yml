@@ -29,3 +29,7 @@ tasks:
     cmds:
       - npm run compile-external-types
       - npm run compile-v3-contract-types
+  fix:
+    cmds:
+      - npm run fix:prettier
+      - npm run fix:lint
