@@ -43,4 +43,4 @@ jobs:
           function-name: ${{ vars.LAMBDA_FUNCTION_NAME }}
           code-artifacts-dir: ./dist
           handler: lib/handlers/index.quoteHandler
-          runtime: nodejs18.x
+          runtime: nodejs22.x
