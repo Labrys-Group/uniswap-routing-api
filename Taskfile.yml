@@ -14,7 +14,7 @@ tasks:
       - task: bundle:lambda
   bundle:lambda:
     cmds:
-      - cd dist && zip -r lambda.zip . -x '*.map' -x 'bin/*'
+      - npm run bundle:lambda
   clean:
     cmds:
       - rm -rf dist
