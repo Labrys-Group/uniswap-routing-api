@@ -11,7 +11,11 @@ tasks:
   build:
     cmds:
       - task: compile:types
+      - task: compile:ts
       - task: bundle:lambda
+  compile:ts:
+    cmds:
+      - npx tsc
   bundle:lambda:
     cmds:
       - npm run bundle:lambda

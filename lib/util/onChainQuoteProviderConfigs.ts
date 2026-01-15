@@ -14,6 +14,7 @@ import { CHAIN_TO_ADDRESSES_MAP, ChainId } from '@uniswap/sdk-core'
 import AsyncRetry from 'async-retry'
 import { AddressMap, BatchParams, BlockNumberConfig, FailureOverrides } from '@uniswap/smart-order-router'
 import { Protocol } from '@uniswap/router-sdk'
+import { ZK_EVM_TESTNET_CHAIN_ID } from '../constants/zk-evm'
 
 export const RETRY_OPTIONS: { [chainId: number]: AsyncRetry.Options | undefined } = {
   ...constructSameRetryOptionsMap(DEFAULT_RETRY_OPTIONS),
@@ -73,6 +74,11 @@ export const RETRY_OPTIONS: { [chainId: number]: AsyncRetry.Options | undefined 
     maxTimeout: 1000,
   },
   [ChainId.SONEIUM]: {
+    retries: 2,
+    minTimeout: 100,
+    maxTimeout: 1000,
+  },
+  [ZK_EVM_TESTNET_CHAIN_ID]: {
     retries: 2,
     minTimeout: 100,
     maxTimeout: 1000,
@@ -263,6 +269,12 @@ export const OPTIMISTIC_CACHED_ROUTES_BATCH_PARAMS: { [protocol in Protocol]: { 
     },
     // TODO: once soneium has view-quoter, optimize muilcallChunk and gasLimitPerCall
     [ChainId.SONEIUM]: {
+      multicallChunk: 80,
+      gasLimitPerCall: 1_200_000,
+      quoteMinSuccessRate: 0.1,
+    },
+    // IMX zkEVM Testnet
+    [ZK_EVM_TESTNET_CHAIN_ID]: {
       multicallChunk: 80,
       gasLimitPerCall: 1_200_000,
       quoteMinSuccessRate: 0.1,
@@ -641,6 +653,12 @@ export const NON_OPTIMISTIC_CACHED_ROUTES_BATCH_PARAMS: { [protocol in Protocol]
         gasLimitPerCall: 1_200_000,
         quoteMinSuccessRate: 0.1,
       },
+      // IMX zkEVM Testnet
+      [ZK_EVM_TESTNET_CHAIN_ID]: {
+        multicallChunk: 80,
+        gasLimitPerCall: 1_200_000,
+        quoteMinSuccessRate: 0.1,
+      },
     },
     // V4 can be the same as V4 to begin. likely v4 is more gas efficient because of pool singleton for swaps by accounting mechanism
     [Protocol.V4]: {
@@ -880,6 +898,10 @@ export const GAS_ERROR_FAILURE_OVERRIDES: { [chainId: number]: FailureOverrides 
     gasLimitOverride: 3_000_000,
     multicallChunk: 45,
   },
+  [ZK_EVM_TESTNET_CHAIN_ID]: {
+    gasLimitOverride: 3_000_000,
+    multicallChunk: 45,
+  },
 }
 
 export const SUCCESS_RATE_FAILURE_OVERRIDES: { [chainId: number]: FailureOverrides } = {
@@ -929,6 +951,10 @@ export const SUCCESS_RATE_FAILURE_OVERRIDES: { [chainId: number]: FailureOverrid
     multicallChunk: 45,
   },
   [ChainId.SONEIUM]: {
+    gasLimitOverride: 3_000_000,
+    multicallChunk: 45,
+  },
+  [ZK_EVM_TESTNET_CHAIN_ID]: {
     gasLimitOverride: 3_000_000,
     multicallChunk: 45,
   },
@@ -1022,6 +1048,12 @@ export const BLOCK_NUMBER_CONFIGS: { [chainId: number]: BlockNumberConfig } = {
       enabled: true,
       attemptsBeforeRollback: 1,
       rollbackBlockOffset: -20,
+    },
+  },
+  [ZK_EVM_TESTNET_CHAIN_ID]: {
+    baseBlockOffset: 0,
+    rollback: {
+      enabled: false,
     },
   },
 }

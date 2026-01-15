@@ -250,18 +250,18 @@ export abstract class InjectorSOR<Router, QueryParams> extends Injector<
                 const protocol = Protocol.V3
                 return optimisticCachedRoutes
                   ? OPTIMISTIC_CACHED_ROUTES_BATCH_PARAMS[protocol][chainId] || {
-                      batchSize: 2,
-                      gasLimitPerCall: 1_000_000,
-                      dropUnexecutedFetches: true,
+                      multicallChunk: 80,
+                      gasLimitPerCall: 1_200_000,
+                      quoteMinSuccessRate: 0.1,
                     }
                   : NON_OPTIMISTIC_CACHED_ROUTES_BATCH_PARAMS[protocol][chainId] || {
-                      batchSize: 2,
-                      gasLimitPerCall: 1_000_000,
-                      dropUnexecutedFetches: false,
+                      multicallChunk: 80,
+                      gasLimitPerCall: 1_200_000,
+                      quoteMinSuccessRate: 0.1,
                     }
               },
-              (_protocol) => GAS_ERROR_FAILURE_OVERRIDES[chainId] || { gasLimitOverride: 2_000_000, maxTimes: 3 },
-              (_protocol) => SUCCESS_RATE_FAILURE_OVERRIDES[chainId] || { successRateFailureOverrides: [] },
+              (_protocol) => GAS_ERROR_FAILURE_OVERRIDES[chainId] || { gasLimitOverride: 3_000_000, multicallChunk: 45 },
+              (_protocol) => SUCCESS_RATE_FAILURE_OVERRIDES[chainId] || { gasLimitOverride: 3_000_000, multicallChunk: 45 },
               (_protocol) => BLOCK_NUMBER_CONFIGS[chainId] || { baseBlockOffset: 0, rollback: { enabled: false } },
               (_useMixedRouteQuoter, _mixedRouteContainsV4Pool, _protocol) => QUOTER_V2_ADDRESSES[chainId]
             )
