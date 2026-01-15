@@ -1,0 +1,27 @@
+{
+  "name": "IMX zkEVM Testnet Token List",
+  "timestamp": "2025-01-15T00:00:00.000Z",
+  "version": {
+    "major": 1,
+    "minor": 0,
+    "patch": 0
+  },
+  "tokens": [
+    {
+      "chainId": 13473,
+      "address": "0x60d7778daA2487B8bdD54A7B6Eabd1f3fb2Bc4Ca",
+      "name": "Test Stablecoin",
+      "symbol": "STBL",
+      "decimals": 18,
+      "logoURI": "https://token-icons.s3.amazonaws.com/eth.png"
+    },
+    {
+      "chainId": 13473,
+      "address": "0x1CcCa691501174B4A623CeDA58cC8f1a76dc3439",
+      "name": "Wrapped Test IMX",
+      "symbol": "wtIMX",
+      "decimals": 18,
+      "logoURI": "https://coin-images.coingecko.com/coins/images/17233/large/immutableX-symbol-BLK-RGB.png"
+    }
+  ]
+}

@@ -590,3 +590,135 @@ smart-order-router (npm package)
 ```
 
 Always update and publish smart-order-router first, then update routing-api's package.json to use the new version.
+
+---
+
+# Token List Management
+
+The routing API uses a token list to provide token metadata (name, symbol, decimals, logo) for routing. The token list is stored in an S3 bucket and fetched by the Lambda function at runtime.
+
+## Token List Location
+
+- **Local file:** `tokenlist.json` (in repo root)
+- **S3 bucket:** Configured via `TOKEN_LIST_CACHE_BUCKET` environment variable
+- **S3 key:** URL-encoded version of the token list URI (e.g., `https%3A%2F%2Fgateway.ipfs.io%2Fipns%2Ftokens.uniswap.org`)
+
+## Token List Format
+
+The token list follows the [Uniswap Token Lists](https://github.com/Uniswap/token-lists) standard:
+
+```json
+{
+  "name": "IMX zkEVM Testnet Token List",
+  "timestamp": "2025-01-15T00:00:00.000Z",
+  "version": {
+    "major": 1,
+    "minor": 0,
+    "patch": 0
+  },
+  "tokens": [
+    {
+      "chainId": 13473,
+      "address": "0x60d7778daA2487B8bdD54A7B6Eabd1f3fb2Bc4Ca",
+      "name": "Test Stablecoin",
+      "symbol": "STBL",
+      "decimals": 18,
+      "logoURI": "https://example.com/token-icon.png"
+    }
+  ]
+}
+```
+
+### Required Fields for Each Token
+
+| Field      | Type   | Description                                    |
+| ---------- | ------ | ---------------------------------------------- |
+| `chainId`  | number | Chain ID (must be 13473 for IMX zkEVM Testnet) |
+| `address`  | string | Token contract address (checksummed)           |
+| `name`     | string | Full token name                                |
+| `symbol`   | string | Token symbol (e.g., "USDC")                    |
+| `decimals` | number | Number of decimals (usually 18 or 6)           |
+| `logoURI`  | string | URL to token logo image (optional)             |
+
+## Adding a New Token
+
+1. **Edit the token list file**
+
+   ```
+
+2. **Add the new token entry:**
+
+   ```json
+   {
+     "chainId": 13473,
+     "address": "0xYourTokenAddress",
+     "name": "Your Token Name",
+     "symbol": "TKN",
+     "decimals": 18,
+     "logoURI": "https://example.com/your-token-logo.png"
+   }
+   ```
+
+3. **Update the version** (bump patch/minor/major as appropriate):
+
+   ```json
+   "version": {
+     "major": 1,
+     "minor": 0,
+     "patch": 1
+   }
+   ```
+
+4. **Update the timestamp:**
+   ```json
+   "timestamp": "2025-01-16T00:00:00.000Z"
+   ```
+
+## Uploading Token List to S3
+
+After modifying the token list, you must upload it to S3 for the Lambda function to use the updated list.
+
+### AWS CLI
+
+```bash
+# Set your bucket name
+export TOKEN_LIST_BUCKET="your-token-list-bucket-name"
+
+# The S3 key must match what the Lambda expects
+# Default key is the URL-encoded version of the default token list URI
+export TOKEN_LIST_KEY="https%3A%2F%2Fgateway.ipfs.io%2Fipns%2Ftokens.uniswap.org"
+
+# Upload the token list
+aws s3 cp tokenlist.json "s3://${TOKEN_LIST_BUCKET}/${TOKEN_LIST_KEY}"
+```
+
+## Environment Variables for Token List
+
+```bash
+# S3 bucket for token list storage
+TOKEN_LIST_CACHE_BUCKET=your-token-list-bucket-name
+```
+
+## Troubleshooting Token List Issues
+
+### "Token not found" errors
+
+- Verify the token is in the token list with the correct chain ID (13473)
+- Check that the token address is checksummed correctly
+- Ensure the token list has been uploaded to S3
+
+### Token list not updating
+
+- Check that you uploaded to the correct S3 bucket
+- Verify the S3 key matches the expected format
+- Wait up to 10 minutes for cache to expire, or redeploy Lambda
+
+### Viewing S3 bucket contents
+
+```bash
+# List all objects in the token list bucket
+aws s3 ls "s3://${TOKEN_LIST_CACHE_BUCKET}/"
+
+# View a specific token list
+aws s3 cp "s3://${TOKEN_LIST_CACHE_BUCKET}/https%3A%2F%2Fgateway.ipfs.io%2Fipns%2Ftokens.uniswap.org" - | jq .
+```
