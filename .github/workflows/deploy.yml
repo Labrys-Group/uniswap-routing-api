@@ -22,6 +22,11 @@ jobs:
           node-version: '18'
           cache: 'npm'
 
+      - name: Install Task
+        uses: arduino/setup-task@v2
+        with:
+          version: 3.x
+
       - name: Install dependencies
         run: npm ci
         env:
@@ -29,7 +34,7 @@ jobs:
           GITHUB_PACKAGE_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Build Lambda code
-        run: npm run build
+        run: task build
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
@@ -42,5 +47,5 @@ jobs:
         with:
           function-name: ${{ vars.LAMBDA_FUNCTION_NAME }}
           code-artifacts-dir: ./dist
-          handler: lib/handlers/index.quoteHandler
+          handler: index.quoteHandler
           runtime: nodejs22.x
