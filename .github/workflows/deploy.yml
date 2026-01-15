@@ -47,3 +47,8 @@ jobs:
           aws lambda update-function-code \
             --function-name ${{ vars.LAMBDA_FUNCTION_NAME }} \
             --zip-file fileb://dist/lambda.zip
+
+          aws lambda update-function-configuration \
+            --function-name ${{ vars.LAMBDA_FUNCTION_NAME }} \
+            --handler index.quoteHandler \
+            --runtime nodejs22.x
